@@ -1,3 +1,10 @@
+# Project binaries
+/kut
+/kutd
+
+# Generated
+assets.go
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

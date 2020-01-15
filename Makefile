@@ -1,13 +1,16 @@
 cmds = kut kutd
+vfile = pkg/version/version.go
+vdata = `git describe --tags`-`date -u +%Y%m%d%H%M%S`
 
 all: $(cmds)
 
 clean:
 	rm $(cmds)
+	rm *.zip
 
 .PHONY: $(cmds) assets
 
-$(cmds):
+$(cmds): version
 	go build ./cmd/$@
 
 kutd: assets third
@@ -17,5 +20,14 @@ assets:
 	go-assets-builder -s=/assets/ -o assets.go assets
 
 third:
-	cd ./cmd/kutd/assets/third && \
-	python3 download.py
+	go fmt cmd/prebuild/main.go
+
+version:
+	rm -f $(vfile)
+	@echo "package version" > $(vfile)
+	@echo "const (" >> $(vfile)
+	@echo "  Version = \"$(vdata)\"" >> $(vfile)
+	@echo ")" >> $(vfile)
+
+package: $(cmds)
+	zip -q dist/kut-$$PLATFORM-$(vdata).zip kut* kutd* LICENSE README.md

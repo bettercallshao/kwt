@@ -7,12 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/bettercallshao/kut/pkg/channel"
+	"github.com/bettercallshao/kut/pkg/msg"
 	"github.com/bettercallshao/kut/pkg/socket"
+	"github.com/bettercallshao/kut/pkg/version"
 )
 
 func main() {
 	log.SetPrefix("[kutd] ")
+	log.Printf("version: %s", version.Version)
+	log.Println("starting kutd ...")
+
 	gin.SetMode(gin.ReleaseMode)
+	gin.DisableConsoleColor()
 
 	router := gin.Default()
 	router.Use(channel.Validate)
@@ -21,8 +27,13 @@ func main() {
 	router.GET("/assets/*filename", assetGET)
 	router.NoRoute(indexGET)
 
+	router.GET("/version", func(c *gin.Context) {
+		c.JSON(msg.HGOOD, msg.Version{Version: version.Version})
+	})
+
 	router.GET("/menu", menuGET)
 	router.POST("/menu", menuPOST)
+	router.GET("/menu/:menu", menuItemGET)
 
 	router.GET("/channel", channel.ListGET)
 	router.GET("/channel/:channel", channel.GET)
@@ -48,5 +59,6 @@ func main() {
 	if port == "" {
 		port = "7171"
 	}
+	log.Println("listening on http://localhost:" + port)
 	router.Run(":" + port)
 }

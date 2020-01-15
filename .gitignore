@@ -4,6 +4,7 @@
 
 # Generated
 assets.go
+*.zip
 
 # Binaries for programs and plugins
 *.exe

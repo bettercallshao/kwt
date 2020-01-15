@@ -14,7 +14,11 @@ var Home = Vue.component("Home", {
         </a>
       </div>
       <div class="list-group mt-3">
-        <a v-for="m in menu" class="list-group-item list-group-item-action">
+        <a
+          v-for="m in menu"
+          v-on:click="clickMenu(m)"
+          class="list-group-item list-group-item-action"
+        >
           <pre display="inline" class="mb-0">Menu {{ m }}</pre>
         </a>
       </div>
@@ -55,10 +59,12 @@ var Home = Vue.component("Home", {
           </button>
         </form>
       </div>
+      <pre display="inline" class="p-3">Version {{ version }}</pre>
     </div>
   `,
   data() {
     return {
+      version: "",
       channel: [],
       menu: [],
       name: "",
@@ -66,12 +72,18 @@ var Home = Vue.component("Home", {
     };
   },
   created() {
+    axios
+      .get("/version")
+      .then(response => (this.version = response.data.version));
     axios.get("/channel").then(response => (this.channel = response.data.list));
     axios.get("/menu").then(response => (this.menu = response.data.list));
   },
   methods: {
     clickChannel(c) {
       this.$router.push(`channel/${c}`);
+    },
+    clickMenu(m) {
+      window.open(`menu/${m}`, "_blank");
     },
     clickIngest() {
       const name = this.name;

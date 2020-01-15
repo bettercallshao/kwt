@@ -30,6 +30,11 @@ type ChannelInfoMap map[string]ChannelInfo
 // MenuName is an alias for the json field name
 const MenuName = "menuname"
 
+// Version represents kut version
+type Version struct {
+	Version string `json:"version"`
+}
+
 // Error for http requests
 type Error struct {
 	Error string `json:"error"`

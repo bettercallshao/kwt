@@ -31,3 +31,12 @@ func menuPOST(c *gin.Context) {
 
 	c.JSON(msg.HGOOD, msg.Empty{})
 }
+
+func menuItemGET(c *gin.Context) {
+	menu, err := menu.Load(c.Param("menu"))
+	if err != nil {
+		c.JSON(msg.HBAD, msg.Error{Error: "Failed to load menu."})
+		return
+	}
+	c.JSON(msg.HGOOD, menu)
+}

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -91,9 +93,22 @@ func Ingest(name string, source string) error {
 	target := Path(name)
 	var data []byte
 	var err error
+	var parsed *url.URL
+	var resp *http.Response
 
-	if data, err = ioutil.ReadFile(source); err != nil {
-		return err
+	parsed, err = url.Parse(source)
+	if strings.HasPrefix(parsed.Scheme, "http") {
+		if resp, err = http.Get(source); err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		if data, err = ioutil.ReadAll(resp.Body); err != nil {
+			return err
+		}
+	} else {
+		if data, err = ioutil.ReadFile(source); err != nil {
+			return err
+		}
 	}
 
 	return ioutil.WriteFile(target, data, 0644)

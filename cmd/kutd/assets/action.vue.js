@@ -2,6 +2,7 @@ var Action = Vue.component("Action", {
   template: html`
     <div>
       <p><strong>{{ action.name }}</strong></p>
+      <p>{{ action.help }}</p>
       <form v-on:submit.prevent>
         <div v-for="p in action.params" class="form-group row">
           <label :for="p.name" class="col-sm-2 col-form-label"
@@ -29,11 +30,6 @@ var Action = Vue.component("Action", {
     </div>
   `,
   props: ["menu", "token", "socket"],
-  data() {
-    return {
-      form: {}
-    };
-  },
   computed: {
     action() {
       if (this.menu.actions) {
@@ -44,6 +40,12 @@ var Action = Vue.component("Action", {
       } else {
         return {};
       }
+    },
+    form() {
+      return this.action.params.reduce((form, p) => {
+        form[p.name] = p.value;
+        return form;
+      }, {});
     }
   },
   methods: {

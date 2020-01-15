@@ -5,14 +5,17 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
+
+	"github.com/bettercallshao/kut/pkg/version"
 )
 
 func main() {
 	log.SetPrefix("[kut] ")
 
 	app := &cli.App{
-		Name:  "kut",
-		Usage: "run a kut executer.",
+		Name:    "kut",
+		Usage:   "run a kut executer.",
+		Version: version.Version,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "master",

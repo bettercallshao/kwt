@@ -109,12 +109,10 @@ A predefined number of Channels are created in the web server (Master), a comman
     go install go-assets-builder
     ```
 
-* Get source code.
+* Get source code. This uses `go mod` so it lives out of the go path.
     ```
-    go get github.com/bettercallshao/kut
+    git clone git@github.com:bettercallshao/kut.git
     ```
-
-* Locate the directory in Go's home and cd into it.
 
 * __[Windows]__ Install cygwin. cygwin is the only `make` environment tested, others may work as well.
 

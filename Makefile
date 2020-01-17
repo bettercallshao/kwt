@@ -2,16 +2,26 @@ cmds = kut kutd
 vfile = pkg/version/version.go
 vdata = `git describe --tags`-`date -u +%Y%m%d%H%M%S`
 
+.PHONY: $(cmds) all clean version tidy assets third package
+
 all: $(cmds)
 
 clean:
 	rm $(cmds)
 	rm *.zip
 
-.PHONY: $(cmds) assets
-
-$(cmds): version
+$(cmds): version tidy
 	go build ./cmd/$@
+
+version:
+	rm -f $(vfile)
+	@echo "package version" > $(vfile)
+	@echo "const (" >> $(vfile)
+	@echo "  Version = \"$(vdata)\"" >> $(vfile)
+	@echo ")" >> $(vfile)
+
+tidy:
+	go mod tidy && go mod vendor
 
 kutd: assets third
 
@@ -21,13 +31,6 @@ assets:
 
 third:
 	go fmt cmd/prebuild/main.go
-
-version:
-	rm -f $(vfile)
-	@echo "package version" > $(vfile)
-	@echo "const (" >> $(vfile)
-	@echo "  Version = \"$(vdata)\"" >> $(vfile)
-	@echo ")" >> $(vfile)
 
 package: $(cmds)
 	zip -q dist/kut-$$PLATFORM-$(vdata).zip kut* kutd* LICENSE README.md

@@ -36,7 +36,7 @@ func TestHappyPath(t *testing.T) {
 		return nil
 	}
 
-	err := Exchange(sema, sourceSink, sourceSink, read, write, coInit)
+	err := Exchange(sourceSink, sourceSink, read, write, sema, coInit)
 	assert.NilError(t, err)
 	assert.Equal(t, readCount, 0)
 	assert.Equal(t, writeCount, 0)

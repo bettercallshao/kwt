@@ -1,0 +1,71 @@
+version: 2.1
+orbs:
+  github-release: h-matsuo/github-release@0.1.1
+jobs:
+  sanity:
+    docker:
+    - image: circleci/golang:1.14
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - run:
+        name: run tests
+        command: |
+          make test
+  package:
+    docker:
+    - image: circleci/golang:1.14
+    working_directory: ~/repo
+    steps:
+    - checkout
+    - run:
+        name: package linux
+        command: |
+          GOOS=linux GOARCH=amd64 make clean package
+    - run:
+        name: package windows
+        command: |
+          GOOS=windows GOARCH=amd64 make clean package
+    - run:
+        name: package darwin
+        command: |
+          GOOS=darwin GOARCH=amd64 make clean package
+    - persist_to_workspace:
+        root: .
+        paths:
+        - dist
+  publish:
+    executor: github-release/default
+    working_directory: ~/repo
+    steps:
+    - attach_workspace:
+      at: ./attached
+    - github-release/create:
+      tag: $CIRCLE_TAG
+      title: $CIRCLE_TAG
+      description: $CIRCLE_TAG
+      file-path: ./attached/dist/
+workflows:
+  version: 2
+  sanity:
+    jobs:
+    - sanity:
+        filters:
+          branches:
+            only: /.*/
+          tags:
+            ignore: /.*/
+  release:
+    jobs:
+    - sanity:
+        filters:
+          tags:
+            only: /v[0-9]+(\.[0-9]+)*/
+          branches:
+            ignore: /.*/
+    - package:
+        requires:
+        - sanity
+    - publish:
+        requires:
+        - package

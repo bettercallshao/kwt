@@ -7,8 +7,7 @@ vdata = `git describe --tags`-`date -u +%Y%m%d%H%M%S`
 all: $(cmds)
 
 clean:
-	rm $(cmds)
-	rm *.zip
+	rm -f $(cmds)
 
 $(cmds): version tidy
 	go build ./cmd/$@
@@ -30,7 +29,10 @@ assets:
 	go-assets-builder -s=/assets/ -o assets.go assets
 
 third:
-	go fmt cmd/prebuild/main.go
+	GOOS= GOARCH= go run cmd/prebuild/main.go
 
 package: $(cmds)
-	zip -q dist/kut-$$PLATFORM-$(vdata).zip kut* kutd* LICENSE README.md
+	zip -q dist/kut-$$GOOS-$$GOARCH-$(vdata).zip kut* kutd* LICENSE README.md
+
+test:
+	go test ./pkg/*

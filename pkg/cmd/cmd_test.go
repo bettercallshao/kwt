@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"strings"
 	"testing"
 
 	"gotest.tools/assert"
@@ -11,11 +10,9 @@ func TestHappyPath(t *testing.T) {
 	sink := make(chan Payload)
 	go Run("echo abc", sink)
 
-	text := ""
-	for payload := range sink {
-		text += payload.Text
-	}
-	text = strings.TrimSpace(text)
+	payload := <-sink
+	assert.Equal(t, payload.Text, ">> echo abc")
 
-	assert.Equal(t, text, "abc")
+	payload = <-sink
+	assert.Equal(t, payload.Text, "abc")
 }

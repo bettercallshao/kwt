@@ -128,6 +128,16 @@ func Load(name string) (Menu, error) {
 		return *menu, err
 	}
 
+	if menu.Actions == nil {
+		menu.Actions = []Action{}
+	}
+
+	for i, _ := range menu.Actions {
+		if menu.Actions[i].Params == nil {
+			menu.Actions[i].Params = []Param{}
+		}
+	}
+
 	return *menu, err
 }
 

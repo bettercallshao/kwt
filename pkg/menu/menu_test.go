@@ -46,6 +46,9 @@ func TestIngestListLoadHappyPath(t *testing.T) {
 	if other.Name != menu.Name {
 		t.Fail()
 	}
+	if other.Actions == nil {
+		t.Fail()
+	}
 }
 
 func TestRender(t *testing.T) {

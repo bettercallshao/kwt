@@ -1,4 +1,5 @@
 # kut
+[![CircleCI](https://circleci.com/gh/bettercallshao/kut.svg?style=shield)](https://circleci.com/gh/bettercallshao/kut)
 
 A GUI to help make running commands easier.
 
@@ -10,7 +11,7 @@ This project aims to help in the following scenarios
 
 * You are a developer and you have long commands that you repeated type, and you need a easier way to compose the commands.
 
-* You are a developer and you are often asked to help analysts fix their software because it requires running a few commands and the analysts are not comfortable dealing with terminals, but of course the command is so simple it's not worth making a UI for it.
+* You are a developer and you are often asked to help analysts fix their computer because it requires running a few commands and the analysts are not comfortable dealing with terminals, but of course the command is so simple it's not worth making a UI for it.
 
 ### Approach
 
@@ -70,6 +71,8 @@ actions:
 
     Note source could be either a http link or a local file.
 
+* The official menus are found in https://github.com/bettercallshao/kut-menus .
+
 * Press ingest to observe a new Menu item.
 
 ### Starting Channel
@@ -106,7 +109,7 @@ A predefined number of Channels are created in the web server (Master), a comman
 
 * Install go-assets-builder.
     ```
-    go install go-assets-builder
+    go install github.com/jessevdk/go-assets-builder
     ```
 
 * Get source code. This uses `go mod` so it lives out of the go path.
@@ -118,7 +121,7 @@ A predefined number of Channels are created in the web server (Master), a comman
 
 * Make distributable package.
     ```
-    PLATFORM=windows-x86_64 make package
+    GOOS=windows GOARCH=amd64 make clean package
     ```
 
 * Locate the zip files in `dist`.

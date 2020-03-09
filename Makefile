@@ -34,5 +34,5 @@ third:
 package: $(cmds)
 	zip -q dist/kut-$$GOOS-$$GOARCH-$(vdata).zip kut* kutd* LICENSE README.md
 
-test:
+test: version
 	go test ./pkg/*

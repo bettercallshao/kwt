@@ -64,8 +64,18 @@ workflows:
           branches:
             ignore: /.*/
     - package:
+        filters:
+          tags:
+            only: /v[0-9]+(\.[0-9]+)*/
+          branches:
+            ignore: /.*/
         requires:
         - sanity
     - publish:
+        filters:
+          tags:
+            only: /v[0-9]+(\.[0-9]+)*/
+          branches:
+            ignore: /.*/
         requires:
         - package

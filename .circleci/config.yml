@@ -19,6 +19,10 @@ jobs:
     steps:
     - checkout
     - run:
+        name: install go-assets-builder
+        command: |
+          go install github.com/jessevdk/go-assets-builder
+    - run:
         name: package linux
         command: |
           GOOS=linux GOARCH=amd64 make clean package

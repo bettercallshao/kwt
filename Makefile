@@ -7,7 +7,7 @@ vdata = `git describe --tags`-`date -u +%Y%m%d%H%M%S`
 all: $(cmds)
 
 clean:
-	rm -f $(cmds)
+	rm -f $(cmds) $(addsuffix .exe, $(cmds))
 
 $(cmds): version tidy
 	go build ./cmd/$@

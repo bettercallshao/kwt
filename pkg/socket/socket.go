@@ -41,7 +41,8 @@ func Validate(c *gin.Context) {
 				make(chan int, 1),
 				make(chan int, 1),
 				make(chan interface{}),
-				make(chan interface{}),
+				// Allow output channel to buffer msgs
+				make(chan interface{}, 1024),
 			}
 		}
 	}

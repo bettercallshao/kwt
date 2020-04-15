@@ -22,7 +22,7 @@ version:
 tidy:
 	go mod tidy && go mod vendor
 
-kutd: assets third
+kutd: third assets
 
 assets:
 	cd ./cmd/kutd && \

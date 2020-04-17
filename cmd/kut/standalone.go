@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/bettercallshao/kut/pkg/cmd"
@@ -101,11 +100,7 @@ func act(c *cli.Context) error {
 		return nil
 	}
 
-	output := make(chan cmd.Payload)
-	go cmd.Run(input, output)
-	for line := range output {
-		log.Printf("%6s %s", line.Pipe, line.Text)
-	}
+	cmd.Run(input, nil)
 
 	return nil
 }

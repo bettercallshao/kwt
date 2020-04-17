@@ -20,7 +20,7 @@ version:
 	@echo ")" >> $(vfile)
 
 tidy:
-	go mod tidy && go mod vendor
+	go mod tidy && go mod vendor && go fmt ./pkg/* ./cmd/*
 
 kutd: third assets
 

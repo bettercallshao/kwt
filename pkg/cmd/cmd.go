@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"github.com/lunixbochs/vtclean"
 	"io"
+	"os"
 	"os/exec"
 	"runtime"
 	"sync"
@@ -27,6 +28,7 @@ func Run(command string, sink chan Payload) {
 
 	// Start command
 	cmd := exec.Command(shell, flag, command)
+	cmd.Stdin = os.Stdin
 	stderr, _ := cmd.StderrPipe()
 	stdout, _ := cmd.StdoutPipe()
 	cmd.Start()

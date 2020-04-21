@@ -19,7 +19,7 @@ This project aims to help in the following scenarios
 
 * Pacakge all frontend resources in binary to allow minimal setup.
 
-* Group each functional group as a "Menu" which is a defined by a YAML file, e.g.
+* Group each functional group as a "Menu" which is a defined by a YAML file saved in `~/.kut/menus`, e.g.
 
 ```yaml
 name: windows-shell
@@ -41,7 +41,7 @@ actions:
 
 * The user can view the results of the execution in the frontend.
 
-## Usage
+## Web Mode Usage
 
 ### Installation
 
@@ -55,18 +55,16 @@ actions:
 
 * Visit http://localhost:7171 .
 
-* At bottom of the page, locate the Ingest Menu form, enter
+* At bottom of the page, locate the Ingest Menu form, enter into source
 
     ```
-    name: windows-shell
-    source: https://raw.githubusercontent.com/bettercallshao/kut-menus/master/windows-shell.yaml
+    https://raw.githubusercontent.com/bettercallshao/kut-menus/master/windows-shell.yaml
     ```
 
     or
 
     ```
-    name: linux-shell
-    source: https://raw.githubusercontent.com/bettercallshao/kut-menus/master/linux-shell.yaml
+    https://raw.githubusercontent.com/bettercallshao/kut-menus/master/linux-shell.yaml
     ```
 
     Note source could be either a http link or a local file.
@@ -82,7 +80,7 @@ A predefined number of Channels are created in the web server (Master), a comman
 * Run `kut` or `kut.exe` in the desired working directory with arguments to claim a Channel with a Menu name and default Channel 0, e.g.
 
     ```
-    kut start linux-shell
+    kut start --menu linux-shell
     ```
 
 * On Windows, this is best done by creating a shortcut to `kutd.exe` on the Desktop, then editing the properties to specify a desired starting directory and arguments. Name the shortcut properly and use a lot of them.
@@ -102,6 +100,26 @@ A predefined number of Channels are created in the web server (Master), a comman
 * Observe the list of Actions, select one.
 
 * Click Execute and observe output at the bottom.
+
+## Standalone Usage
+
+The `kut` client can be run standalone to render and execute commands based on commandline input.
+
+* After installation, menu can be ingested locally for standalone consumption by using the `ingest` command, e.g.
+
+    ```
+    kut ingest --source https://raw.githubusercontent.com/bettercallshao/kut-menus/master/linux-shell.yaml
+    ```
+
+* Actions in menus are listed in the help page of `kut`.
+    ```
+    kut -h
+    ```
+
+* Run a action by using the menu name as the primary command, action name as sub command, and parameters as flags, e.g.
+    ```
+    kut linux-shell ping --host twitter.com
+    ```
 
 ## Building
 

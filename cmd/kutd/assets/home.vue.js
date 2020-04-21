@@ -25,19 +25,6 @@ var Home = Vue.component("Home", {
       <div class="border mt-3 p-3">
         <form v-on:submit.prevent>
           <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-              <input
-                v-model="name"
-                type="text"
-                class="form-control"
-                id="name"
-                name="name"
-                placeholder="kubectl"
-              />
-            </div>
-          </div>
-          <div class="form-group row">
             <label for="source" class="col-sm-2 col-form-label">Source</label>
             <div class="col-sm-10">
               <input
@@ -67,7 +54,6 @@ var Home = Vue.component("Home", {
       version: "",
       channel: [],
       menu: [],
-      name: "",
       source: ""
     };
   },
@@ -86,9 +72,8 @@ var Home = Vue.component("Home", {
       window.open(`menu/${m}`, "_blank");
     },
     clickIngest() {
-      const name = this.name;
       const source = this.source;
-      axios.post("/menu", { name, source }).then(() => (window.location = "/"));
+      axios.post("/menu", { source }).then(() => (window.location = "/"));
     }
   }
 });

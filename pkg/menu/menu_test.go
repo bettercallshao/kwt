@@ -27,15 +27,15 @@ func TestIngestListLoadHappyPath(t *testing.T) {
 	os.Setenv("KUT_HOME", home)
 	defer os.RemoveAll(home)
 
+	name := "test"
 	menu := &Menu{
-		Name: "aname",
+		Name: name,
 	}
 
 	source := filepath.Join(home, "source.yaml")
 	Save(source, menu)
 
-	name := "test"
-	Ingest(name, source)
+	Ingest(source)
 
 	ls := List()
 	if ls[0] != name {

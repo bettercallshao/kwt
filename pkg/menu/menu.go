@@ -89,12 +89,12 @@ func List() []string {
 }
 
 // Ingest a file into system store
-func Ingest(name string, source string) error {
-	target := Path(name)
+func Ingest(source string) error {
 	var data []byte
 	var err error
 	var parsed *url.URL
 	var resp *http.Response
+	var menu Menu
 
 	parsed, err = url.Parse(source)
 	if strings.HasPrefix(parsed.Scheme, "http") {
@@ -111,18 +111,29 @@ func Ingest(name string, source string) error {
 		}
 	}
 
-	return ioutil.WriteFile(target, data, 0644)
+	if menu, err = Parse(data); err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(Path(menu.Name), data, 0644)
 }
 
 // Load a menu given a name
 func Load(name string) (Menu, error) {
-	menu := &Menu{}
 	var data []byte
 	var err error
 
 	if data, err = ioutil.ReadFile(Path(name)); err != nil {
-		return *menu, err
+		return Menu{}, err
 	}
+
+	return Parse(data)
+}
+
+// Parse a menu given a blob
+func Parse(data []byte) (Menu, error) {
+	menu := &Menu{}
+	var err error
 
 	if err = yaml.Unmarshal(data, menu); err != nil {
 		return *menu, err

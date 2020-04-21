@@ -13,7 +13,6 @@ const HBAD = 400
 
 // MenuIngest contains info for ingesting menu.
 type MenuIngest struct {
-	Name   string `json:"name" binding:"required"`
 	Source string `json:"source" binding:"required"`
 }
 

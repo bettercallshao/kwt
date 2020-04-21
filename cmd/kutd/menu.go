@@ -19,12 +19,12 @@ func menuPOST(c *gin.Context) {
 		return
 	}
 
-	if ingest.Name == "" || ingest.Source == "" {
-		c.JSON(msg.HBAD, msg.Error{Error: "Name and source cannot be empty."})
+	if ingest.Source == "" {
+		c.JSON(msg.HBAD, msg.Error{Error: "Source cannot be empty."})
 		return
 	}
 
-	if err = menu.Ingest(ingest.Name, ingest.Source); err != nil {
+	if err = menu.Ingest(ingest.Source); err != nil {
 		c.JSON(msg.HBAD, msg.Error{Error: "Failed to ingest."})
 		return
 	}

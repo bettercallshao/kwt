@@ -78,7 +78,7 @@ func main() {
 					},
 				},
 			},
-			commands()...,
+			commands([]string{"s", "i"})...,
 		),
 	}
 

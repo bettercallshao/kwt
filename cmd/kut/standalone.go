@@ -4,17 +4,26 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bettercallshao/kut/pkg/alias"
 	"github.com/bettercallshao/kut/pkg/cmd"
 	"github.com/bettercallshao/kut/pkg/menu"
 	"github.com/urfave/cli/v2"
 )
 
-func commands() []*cli.Command {
+const DRY = "dry"
+
+func commands(avoid []string) []*cli.Command {
+	// Two aliases are reserved: help -> h, version -> v
+	hv := []string{"h", "v"}
 	commands := make([]*cli.Command, 0)
+	store := alias.New()
+	alias.Avoid(store, hv)
+	alias.Avoid(store, avoid)
 
 	dryFlag := &cli.BoolFlag{
-		Name:  "dry",
-		Usage: "render command but don't run",
+		Name:    DRY,
+		Usage:   "render command but don't run",
+		Aliases: []string{"d"},
 	}
 
 	for _, name := range menu.List() {
@@ -24,16 +33,25 @@ func commands() []*cli.Command {
 		}
 
 		subCommands := make([]*cli.Command, 0)
+		subStore := alias.New()
+		alias.Avoid(subStore, hv)
+
 		for _, action := range menu.Actions {
 
 			flags := make([]cli.Flag, 0)
+			flagStore := alias.New()
+			alias.Avoid(flagStore, hv)
+			alias.Avoid(flagStore, dryFlag.Aliases)
+
 			for _, param := range action.Params {
+
 				flags = append(
 					flags,
 					&cli.StringFlag{
-						Name:  param.Name,
-						Value: param.Value,
-						Usage: param.Help,
+						Name:    param.Name,
+						Value:   param.Value,
+						Usage:   param.Help,
+						Aliases: alias.Pick(flagStore, param.Name),
 					},
 				)
 			}
@@ -42,10 +60,11 @@ func commands() []*cli.Command {
 			subCommands = append(
 				subCommands,
 				&cli.Command{
-					Name:   action.Name,
-					Usage:  action.Help,
-					Flags:  flags,
-					Action: act,
+					Name:    action.Name,
+					Usage:   action.Help,
+					Flags:   flags,
+					Action:  act,
+					Aliases: alias.Pick(subStore, action.Name),
 				},
 			)
 		}
@@ -56,6 +75,7 @@ func commands() []*cli.Command {
 				Name:        menu.Name,
 				Usage:       menu.Help,
 				Subcommands: subCommands,
+				Aliases:     alias.Pick(store, menu.Name),
 			},
 		)
 	}
@@ -64,7 +84,7 @@ func commands() []*cli.Command {
 }
 
 func act(c *cli.Context) error {
-	dry := c.Bool("dry")
+	dry := c.Bool(DRY)
 
 	// the cli lib concatenates command hierarchy, menu name is the second
 	name := strings.Split(c.App.Name, " ")[1]

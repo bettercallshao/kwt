@@ -1,6 +1,8 @@
 package alias
 
 import (
+	"unicode"
+
 	"github.com/golang-collections/collections/set"
 )
 
@@ -24,10 +26,12 @@ func Avoid(store Store, avoid []string) {
 // Pick a alias from name and remember in store
 func Pick(store Store, name string) []string {
 	for _, r := range name {
-		c := string(r)
-		if !store.set.Has(c) {
-			store.set.Insert(c)
-			return []string{c}
+		if unicode.IsLetter(r) {
+			c := string(r)
+			if !store.set.Has(c) {
+				store.set.Insert(c)
+				return []string{c}
+			}
 		}
 	}
 	return []string{}

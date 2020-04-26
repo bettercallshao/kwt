@@ -13,4 +13,5 @@ func TestHappyPath(t *testing.T) {
 	assert.Equal(t, Pick(s, "start")[0], "s")
 	assert.Equal(t, Pick(s, "stop")[0], "t")
 	assert.Equal(t, len(Pick(s, "sta")), 0)
+	assert.Equal(t, Pick(s, " -,.x")[0], "x")
 }

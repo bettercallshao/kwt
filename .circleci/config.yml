@@ -59,6 +59,14 @@ workflows:
             only: /.*/
           tags:
             ignore: /.*/
+    - package:
+        filters:
+          tags:
+            only: /.*/
+          branches:
+            ignore: /.*/
+        requires:
+        - sanity
   release:
     jobs:
     - sanity:

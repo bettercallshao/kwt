@@ -8,6 +8,8 @@ var Channel = Vue.component("Channel", {
         >
       </p>
       <router-view :menu="menu" :token="token" :socket="socket"></router-view>
+      <p class="mt-5">Latest</p>
+      <div class="border p-2" v-html="compiled"></div>
       <p class="mt-5">Output</p>
       <div class="border p-2">
         <pre>{{ outs.join("\\n") }}</pre>
@@ -20,8 +22,14 @@ var Channel = Vue.component("Channel", {
       token: "",
       errors: [],
       socket: {},
-      outs: []
+      outs: [],
+      latest: []
     };
+  },
+  computed: {
+    compiled: function() {
+      return marked(this.latest.join("\n"), { sanitize: true });
+    }
   },
   created() {
     const channel = this.$route.params.channel;
@@ -46,6 +54,11 @@ var Channel = Vue.component("Channel", {
         data = JSON.parse(event.data);
         if (data.token == this.token) {
           this.outs.push(data.payload.text);
+          if (data.payload.pipe == 'stdout') {
+            this.latest.push(data.payload.text);
+          } else if (data.payload.pipe == 'echo') {
+            this.latest = [];
+          }
         }
       } catch (_) {}
     };

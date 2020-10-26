@@ -20,6 +20,7 @@ func main() {
 		"https://unpkg.com/axios/dist/axios.min.js",
 		"https://unpkg.com/axios/dist/axios.min.map",
 		"https://unpkg.com/vue-router@3.1.3/dist/vue-router.js",
+		"https://unpkg.com/marked@0.3.6/marked.min.js",
 	} {
 		dl(url)
 	}

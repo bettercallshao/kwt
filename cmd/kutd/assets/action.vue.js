@@ -9,12 +9,12 @@ var Action = Vue.component("Action", {
             >{{ p.name }}</label
           >
           <div class="col-sm-10">
-            <input
+            <textarea
               v-model="form[p.name]"
               :id="p.name"
               :name="p.name"
               :placeholder="p.help"
-              type="text"
+              rows="1"
               class="form-control-plaintext border p-2"
             />
           </div>

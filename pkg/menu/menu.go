@@ -2,6 +2,8 @@ package menu
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -33,8 +35,10 @@ type Action struct {
 // Menu struct: a list of actions
 type Menu struct {
 	Name    string   `json:"name" binding:"required"`
+	Version string   `json:"version"`
 	Help    string   `json:"help"`
 	Actions []Action `json:"actions" binding:"required"`
+	Hash    string   `json:"hash"`
 }
 
 // Home retrieves path of kut home e.g. /home/james/.kut
@@ -148,6 +152,9 @@ func Parse(data []byte) (Menu, error) {
 			menu.Actions[i].Params = []Param{}
 		}
 	}
+
+	hash16 := md5.Sum(data)
+	menu.Hash = hex.EncodeToString(hash16[:])[:4]
 
 	return *menu, err
 }

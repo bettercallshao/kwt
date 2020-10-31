@@ -7,6 +7,8 @@ var Channel = Vue.component("Channel", {
           }})</strong
         >
       </p>
+      <p>{{ menu.help }}</p>
+      <p>{{ menu.version }} {{ menu.hash }}</p>
       <router-view :menu="menu" :token="token" :socket="socket"></router-view>
       <p class="mt-5">Latest</p>
       <div class="border p-2" v-html="compiled"></div>

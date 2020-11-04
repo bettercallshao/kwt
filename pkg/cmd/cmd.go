@@ -3,8 +3,10 @@ package cmd
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"sync"
 
@@ -20,13 +22,20 @@ type Payload struct {
 // Run executes a input command in shell
 func Run(command string, sink chan Payload) {
 	// Get shell name based on OS
-	shell, flag := func() (string, string) {
+	shell, flag, header := func() (string, string, string) {
 		if runtime.GOOS == "windows" {
-			return "cmd", "/C"
+			return "cmd", "/C", "@echo off\n"
 		}
-		return "bash", "-c"
+		return "bash", "-c", ""
 	}()
-	cmd := exec.Command(shell, flag, command)
+
+	// Write command to a file, don't handle err
+	// Add .bat since windows cares about extention
+	dir, _ := ioutil.TempDir("", "")
+	path := filepath.Join(dir, "kut.bat")
+	ioutil.WriteFile(path, []byte(header+command), 0700)
+	defer os.RemoveAll(dir)
+	cmd := exec.Command(shell, flag, path)
 
 	if sink == nil {
 		// Run in native mode if no sink

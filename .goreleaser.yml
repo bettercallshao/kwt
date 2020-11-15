@@ -33,6 +33,13 @@ brews:
       name: homebrew-tap
     homepage: "https://github.com/bettercallshao/kut"
     description: "Run commands more easily"
+scoop:
+  bucket:
+    owner: bettercallshao
+    name: scoop-bucket
+  homepage: "https://github.com/bettercallshao/kut"
+  description: "Run commands more easily"
+  license: MIT
 archives:
   - format: zip
 checksum:

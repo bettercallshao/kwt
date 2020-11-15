@@ -1,54 +1,18 @@
 version: 2.1
-orbs:
-  github-release: h-matsuo/github-release@0.1.1
 jobs:
   sanity:
     docker:
-    - image: circleci/golang:1.14
-    working_directory: ~/repo
+    - image: circleci/golang:1.15
     steps:
     - checkout
-    - run:
-        name: run tests
-        command: |
-          make test
-  package:
+    - run: make test
+    - run: make
+  release:
     docker:
-    - image: circleci/golang:1.14
-    working_directory: ~/repo
+    - image: circleci/golang:1.15
     steps:
     - checkout
-    - run:
-        name: install go-assets-builder
-        command: |
-          go install github.com/jessevdk/go-assets-builder
-    - run:
-        name: package linux
-        command: |
-          GOOS=linux GOARCH=amd64 make clean package
-    - run:
-        name: package windows
-        command: |
-          GOOS=windows GOARCH=amd64 make clean package
-    - run:
-        name: package darwin
-        command: |
-          GOOS=darwin GOARCH=amd64 make clean package
-    - persist_to_workspace:
-        root: .
-        paths:
-        - dist
-  publish:
-    executor: github-release/default
-    working_directory: ~/repo
-    steps:
-    - attach_workspace:
-        at: ./attached
-    - github-release/create:
-        tag: $CIRCLE_TAG
-        title: $CIRCLE_TAG
-        description: $CIRCLE_TAG
-        file-path: ./attached/dist/
+    - run: curl -sL https://git.io/goreleaser | bash
 workflows:
   version: 2
   sanity:
@@ -59,14 +23,6 @@ workflows:
             only: /.*/
           tags:
             ignore: /.*/
-    - package:
-        filters:
-          tags:
-            only: /.*/
-          branches:
-            ignore: /.*/
-        requires:
-        - sanity
   release:
     jobs:
     - sanity:
@@ -75,7 +31,7 @@ workflows:
             only: /v[0-9]+(\.[0-9]+)*/
           branches:
             ignore: /.*/
-    - package:
+    - release:
         filters:
           tags:
             only: /v[0-9]+(\.[0-9]+)*/
@@ -83,11 +39,3 @@ workflows:
             ignore: /.*/
         requires:
         - sanity
-    - publish:
-        filters:
-          tags:
-            only: /v[0-9]+(\.[0-9]+)*/
-          branches:
-            ignore: /.*/
-        requires:
-        - package

@@ -1,0 +1,47 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    - make
+builds:
+  - id: kut
+    main: ./cmd/kut
+    binary: kut
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+  - id: kutd
+    main: ./cmd/kutd
+    binary: kutd
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+brews:
+  - name: kut
+    tap:
+      owner: bettercallshao
+      name: homebrew-tap
+    homepage: "https://github.com/bettercallshao/kut"
+    description: "Run commands more easily."
+archives:
+  - format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

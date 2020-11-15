@@ -25,6 +25,7 @@ tidy:
 kutd: third assets
 
 assets:
+	go install github.com/jessevdk/go-assets-builder && \
 	cd ./cmd/kutd && \
 	go-assets-builder -s=/assets/ -o assets.go assets
 

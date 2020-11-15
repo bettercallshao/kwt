@@ -32,7 +32,7 @@ brews:
       owner: bettercallshao
       name: homebrew-tap
     homepage: "https://github.com/bettercallshao/kut"
-    description: "Run commands more easily."
+    description: "Run commands more easily"
 archives:
   - format: zip
 checksum:

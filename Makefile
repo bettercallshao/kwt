@@ -1,6 +1,6 @@
 cmds = kut kutd
 vfile = pkg/version/version.go
-vdata = `git describe --tags`-`date -u +%Y%m%d%H%M%S`
+vdata = `git describe --tags`-`git log -1 --format=%cd --date=format:"%Y%m%d%H%M%S"`
 
 .PHONY: $(cmds) all clean version tidy assets third package
 

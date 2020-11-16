@@ -1,145 +1,197 @@
 # kut
+[![Release](https://img.shields.io/github/release/bettercallshao/kut.svg)](https://github.com/bettercallshao/kut/releases/latest)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](/LICENSE.md)
 [![CircleCI](https://circleci.com/gh/bettercallshao/kut.svg?style=shield)](https://circleci.com/gh/bettercallshao/kut)
 
-A GUI to help make running commands easier.
+Run commands more easily.
 
-## Background
+* [What is it](#what-is-it)
+* [Installation](#installation)
+* [Quick start](#quick-start)
+* [Develop](#develop)
+* [TODO](#todo)
 
-### Motivation
+## What is it
 
-This project aims to help in the following scenarios
+Kut reads from a repository of YAMLs of templated commands, and enables the user to render and execute the commands with arguments provided at run-time. It can help to
+* Avoid re-typing long commands over and over for routine tasks.
+* Version control and share commands.
 
-* You are a developer and you have long commands that you repeated type, and you need a easier way to compose the commands.
+## Installation
 
-* You are a developer and you are often asked to help analysts fix their computer because it requires running a few commands and the analysts are not comfortable dealing with terminals, but of course the command is so simple it's not worth making a UI for it.
-
-### Approach
-
-* Use Go instead of Node or Python to allow easy installation on Windows.
-
-* Pacakge all frontend resources in binary to allow minimal setup.
-
-* Group each functional group as a "Menu" which is a defined by a YAML file saved in `~/.kut/menus`, e.g.
-
-```yaml
-name: windows-shell
-help: Collection of common windows shell commands
-actions:
-- name: ping
-  help: Ping a party in network
-  template: ping {{.host}}
-  params:
-  - name: host
-    help: Host to ping
-    value: google.com
-- name: ip
-  help: Show my ip adresses
-  template: ipconfig
+Linux & Mac through [Homebrew](https://brew.sh/).
+```
+brew install bettercallshao/tap/kut
 ```
 
-* The user executes an Action by providing Params, which is rendered into the Template (Go Template) and executed in a shell environment.
+Windows through [Scoop](https://scoop.sh/).
+```
+scoop bucket add bettercallshao https://github.com/bettercallshao/scoop-bucket
+scoop install bettercallshao/kut
+```
 
-* The user can view the results of the execution in the frontend.
+Or download latest zip from [releases](https://github.com/bettercallshao/kut/releases), extract, and put the binary files on your system path.
 
-## Web Mode Usage
+## Quick start
 
-### Installation
+Kick start by ingesting the demo menus.
+```
+kut i -s https://raw.githubusercontent.com/bettercallshao/kut-menus/master/python-demo.yaml
+kut i -s https://raw.githubusercontent.com/bettercallshao/kut-menus/master/developer-demo.yaml
+```
 
-* Download a distributable zip from Github releases.
+See a list of commands by running `kut h`.
+```
+NAME:
+   kut - run a kut executer.
 
-* Unzip the package and move the executables to a place where they can be executed.
+USAGE:
+   kut [global options] command [command options] [arguments...]
 
-### Ingesting Menu
+VERSION:
+   v0.4.11-20201115140037
 
-* Run `kutd` or `kutd.exe` or create a shortcut to run. This is the web server and message exchange server and it needs to keep running.
+COMMANDS:
+   start, s           starts executor for a menu
+   ingest, i          ingests menu locally from a source
+   developer-demo, d  Developer commands for demo
+   python-demo, p     Python commands for demo
+   help, h            Shows a list of commands or help for one command
 
-* Visit http://localhost:7171 .
+GLOBAL OPTIONS:
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
+```
+* `start`, `ingest`, `help`, `--help`, `--version` are global arguments.
+* `python-demo` and `developer-demo` are command definitions.
 
-* At bottom of the page, locate the Ingest Menu form, enter into source
+Check what is in `python-demo` by `kut p -h`.
+```
+NAME:
+   kut python-demo - Python commands for demo
 
-    ```
-    https://raw.githubusercontent.com/bettercallshao/kut-menus/master/windows-shell.yaml
-    ```
+USAGE:
+   kut python-demo command [command options] [arguments...]
 
-    or
+COMMANDS:
+   uuid, u                 Generate a UUID
+   forex-rate, f           Print forex rates
+   mortgage-calculator, m  Calculate mortgage payment
+   bit-expander, b         Convert between decimal, hex, and bit representations
+   csv-to-markdown, c      Convert a CSV to markdown table
+   help, h                 Shows a list of commands or help for one command
 
-    ```
-    https://raw.githubusercontent.com/bettercallshao/kut-menus/master/linux-shell.yaml
-    ```
+OPTIONS:
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
+```
 
-    Note source could be either a http link or a local file.
+Check what `forex-rate` does with `kut p f -h`.
+```
+NAME:
+   kut python-demo forex-rate - Print forex rates
 
-* The official menus are found in https://github.com/bettercallshao/kut-menus .
+USAGE:
+   kut python-demo forex-rate [command options] [arguments...]
 
-* Press ingest to observe a new Menu item.
+OPTIONS:
+   --base value, -b value     Base currency (default: "USD")
+   --symbols value, -s value  Comma separated currency symbol list (default: "CAD,GBP")
+   --dry, -d                  render command but don't run (default: false)
+   --help, -h                 show help (default: false)
+```
+* `--dry`, `--help` are flags defined by `kut`.
+* `--base`, `--symbols` are input arguments, with default values.
 
-### Starting Channel
+Lets try EUR to JPY and AUD.
+```
+$ kut p f -b EUR -s JPY,AUD
+On 2020-11-13
+1 EUR can buy 123.88 JPY
+1 EUR can buy 1.63 AUD
+```
 
-A predefined number of Channels are created in the web server (Master), a command runner (Executor) can connect to a channel to create an execution environment to run commands.
+Use the `--dry` flag to see what actually ran.
+```
+$ kut p f -b EUR -s AUD -d
+template: python3 -u -c "
+import urllib.request
+import urllib.parse
+import json
 
-* Run `kut` or `kut.exe` in the desired working directory with arguments to claim a Channel with a Menu name and default Channel 0, e.g.
+url = 'https://api.exchangeratesapi.io/latest?base={{.base}}&symbols={{.symbols}}'
+r = json.load(urllib.request.urlopen(url))
 
-    ```
-    kut start --menu linux-shell
-    ```
+date = r['date']
+rates = r['rates']
 
-* On Windows, this is best done by creating a shortcut to `kutd.exe` on the Desktop, then editing the properties to specify a desired starting directory and arguments. Name the shortcut properly and use a lot of them.
+print(f'On {date}')
+print('\n'.join(
+  f'1 {{.base}} can buy {rates[symbol]:.2f} {symbol}'
+  for symbol in rates
+))
+"
 
-* `kut` is built with `github.com/urfave/cli` and help is available with
+rendered: python3 -u -c "
+import urllib.request
+import urllib.parse
+import json
 
-    ```
-    kut -h
-    ```
+url = 'https://api.exchangeratesapi.io/latest?base=EUR&symbols=AUD'
+r = json.load(urllib.request.urlopen(url))
 
-* This needs to keep running for Actions to execute.
+date = r['date']
+rates = r['rates']
 
-### Executing Action
+print(f'On {date}')
+print('\n'.join(
+  f'1 EUR can buy {rates[symbol]:.2f} {symbol}'
+  for symbol in rates
+))
+"
+```
 
-* Visit http://localhost:7171 and select Channel 0.
+First the command template was printed, then the command rendered with input arguments. The command is defined in `$HOME/.kut/menus/python-demo.yaml`.
+```yaml
+name: python-demo
+version: v0.1.0
+help: Python commands for demo
+actions:
+- name: forex-rate
+  help: Print forex rates
+  template: |
+    python3 -u -c "
+    import urllib.request
+    import urllib.parse
+    import json
 
-* Observe the list of Actions, select one.
+    url = 'https://api.exchangeratesapi.io/latest?base={{.base}}&symbols={{.symbols}}'
+    r = json.load(urllib.request.urlopen(url))
 
-* Click Execute and observe output at the bottom.
+    date = r['date']
+    rates = r['rates']
 
-## Standalone Usage
+    print(f'On {date}')
+    print('\n'.join(
+      f'1 {{.base}} can buy {rates[symbol]:.2f} {symbol}'
+      for symbol in rates
+    ))
+    "
+  params:
+  - name: base
+    help: Base currency
+    value: USD
+  - name: symbols
+    help: Comma separated currency symbol list
+    value: CAD,GBP
+```
 
-The `kut` client can be run standalone to render and execute commands based on commandline input.
+Add to this file or create more YAMLs in `$HOME/.kut/menus/` to add more commands.
 
-* After installation, menu can be ingested locally for standalone consumption by using the `ingest` command, e.g.
+## Develop
 
-    ```
-    kut ingest --source https://raw.githubusercontent.com/bettercallshao/kut-menus/master/linux-shell.yaml
-    ```
+To build, install golang and run `make`. The CI is powered by [GoReleaser](https://goreleaser.com/) and CircleCI.
 
-* Actions in menus are listed in the help page of `kut`.
-    ```
-    kut -h
-    ```
+## TODO
 
-* Run a action by using the menu name as the primary command, action name as sub command, and parameters as flags, e.g.
-    ```
-    kut linux-shell ping --host twitter.com
-    ```
-
-## Building
-
-* Install Go.
-
-* Install go-assets-builder.
-    ```
-    go install github.com/jessevdk/go-assets-builder
-    ```
-
-* Get source code. This uses `go mod` so it lives out of the go path.
-    ```
-    git clone git@github.com:bettercallshao/kut.git
-    ```
-
-* __[Windows]__ Install cygwin. cygwin is the only `make` environment tested, others may work as well.
-
-* Make distributable package.
-    ```
-    GOOS=windows GOARCH=amd64 make clean package
-    ```
-
-* Locate the zip files in `dist`.
+This project builds `kut` and `kutd`. `kutd` is a web frontend allowing access to the same commands from the browser. Documentation is to be completed, for the meantime, there is an outdated [blog](https://medium.com/@bettercallshao/kut-free-ui-for-everyone-a262a82c5bab).

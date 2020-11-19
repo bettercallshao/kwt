@@ -2,22 +2,46 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/bettercallshao/kut/pkg/msg"
 	"github.com/gin-gonic/gin"
 )
 
-func assetWrite(c *gin.Context, filename string) {
-	file, ok := Assets.Files[strings.TrimLeft(filename, "/")]
+func readAsset(filename string) ([]byte, bool) {
+	file, ok := Assets.Files[filename]
 	if !ok {
-		c.String(msg.HBAD, "")
-		return
+		return nil, false
 	}
 
 	file.Seek(0, 0)
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
+		return nil, false
+	}
+
+	return data, true
+}
+
+func readFile(filename string, assetRoot string) ([]byte, bool) {
+	data, err := ioutil.ReadFile(path.Join(assetRoot, filename))
+	return data, err == nil
+}
+
+func staticWrite(c *gin.Context, filename string) {
+	assetRoot := os.Getenv("ASSETS_ROOT")
+	var data []byte
+	var ok bool
+	if assetRoot == "" {
+		data, ok = readAsset(filename)
+	} else {
+		// TODO: vulnerable to relative path attack
+		data, ok = readFile(filename, assetRoot)
+	}
+
+	if !ok {
 		c.String(msg.HBAD, "")
 		return
 	}
@@ -30,9 +54,9 @@ func assetWrite(c *gin.Context, filename string) {
 }
 
 func indexGET(c *gin.Context) {
-	assetWrite(c, "index.html")
+	staticWrite(c, "index.html")
 }
 
 func assetGET(c *gin.Context) {
-	assetWrite(c, c.Param("filename"))
+	staticWrite(c, strings.TrimLeft(c.Param("filename"), "/"))
 }

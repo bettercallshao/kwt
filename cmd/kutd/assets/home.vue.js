@@ -37,13 +37,15 @@ var Home = Vue.component("Home", {
               />
             </div>
           </div>
-          <button
-            type="submit"
-            v-on:click="clickIngest()"
-            class="btn btn-primary"
-          >
-            Ingest Menu
-          </button>
+          <div class="d-flex flex-row-reverse">
+            <button
+              type="submit"
+              v-on:click="clickIngest()"
+              class="btn btn-primary"
+            >
+              Ingest Menu
+            </button>
+          </div>
         </form>
       </div>
       <pre display="inline" class="p-3">Version {{ version }}</pre>

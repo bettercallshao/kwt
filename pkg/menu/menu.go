@@ -77,6 +77,7 @@ func Path(name string) string {
 
 // List generates available menus
 func List() []string {
+	const suffix = ".yaml"
 	var files []os.FileInfo
 	var err error
 	var ls []string
@@ -86,7 +87,9 @@ func List() []string {
 	}
 
 	for _, f := range files {
-		ls = append(ls, strings.Replace(f.Name(), ".yaml", "", -1))
+		if strings.HasSuffix(f.Name(), suffix) {
+			ls = append(ls, strings.TrimSuffix(f.Name(), suffix))
+		}
 	}
 
 	return ls

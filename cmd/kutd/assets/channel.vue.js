@@ -2,19 +2,26 @@ var Channel = Vue.component("Channel", {
   template: html`
     <div>
       <p>
-        <strong
-          >{{ errors.join(" ") || menu.name }} ({{ $route.params.channel
-          }})</strong
-        >
+        <strong>{{ errors.join(" ") || menu.name }}</strong>
       </p>
+      <p>Channel {{ $route.params.channel}}</p>
       <p>{{ menu.help }}</p>
       <p>{{ menu.version }} {{ menu.hash }}</p>
-      <router-view :menu="menu" :token="token" :socket="socket"></router-view>
-      <p class="mt-5">Latest</p>
-      <div class="border p-2" v-html="compiled"></div>
-      <p class="mt-5">Output</p>
+      <router-view class="mt-5" :menu="menu" :token="token" :socket="socket"></router-view>
+      <div class="custom-control custom-switch mt-3">
+        <input type="checkbox" class="custom-control-input" id="markdown" v-model="checked">
+        <label class="custom-control-label" for="markdown">Markdown</label>
+      </div>
       <div class="border p-2">
-        <pre>{{ outs.join("\\n") }}</pre>
+        <div v-if="checked" v-html="latestMarked"></div>
+        <div v-else><pre>{{ latestRaw }}</pre></div>
+      </div>
+      <div class="custom-control custom-switch mt-3">
+        <input type="checkbox" class="custom-control-input" id="showLog" v-model="showLog">
+        <label class="custom-control-label" for="showLog">Show log</label>
+      </div>
+      <div v-if="showLog" class="border p-2 overflow-auto" style="height: 360px">
+        <pre>{{ logRaw }}</pre>
       </div>
     </div>
   `,
@@ -25,13 +32,21 @@ var Channel = Vue.component("Channel", {
       errors: [],
       socket: {},
       outs: [],
-      latest: []
+      latest: [],
+      checked: false,
+      showLog: false,
     };
   },
   computed: {
-    compiled: function() {
-      return marked(this.latest.join("\n"), { sanitize: true });
-    }
+    latestRaw() {
+      return this.latest.join("\n")
+    },
+    latestMarked() {
+      return marked(this.latestRaw, { sanitize: true });
+    },
+    logRaw() {
+      return this.outs.join("\n")
+    },
   },
   created() {
     const channel = this.$route.params.channel;

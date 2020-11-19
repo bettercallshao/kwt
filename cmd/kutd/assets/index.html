@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Kut</title>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <link rel="stylesheet" href="/assets/third/stackpath.bootstrapcdn.com/bootswatch/4.5.2/cosmo/bootstrap.min.css">
@@ -16,7 +17,7 @@
       font-family: 'mono'
     }
   </style>
-<body>
+<body style="font-family: 'Lucida Console', Monaco, monospace">
   <script src='/assets/util.js'></script>
   <script src='/assets/home.vue.js'></script>
   <script src='/assets/channel.vue.js'></script>
@@ -24,10 +25,10 @@
   <script src='/assets/action.vue.js'></script>
 
   <nav class="navbar navbar-light bg-light">
-    <a class="nav-item nav-link" href="/">Restart</a>
+    <a class="nav-item nav-link" href="/">Home</a>
   </nav>
-  <div id="app" class="container m-3">
-    <router-view></router-view>
+  <div id="app" class="m-5 row align-items-center justify-content-center">
+    <router-view style="width: 720px"></router-view>
   </div>
 
   <script>

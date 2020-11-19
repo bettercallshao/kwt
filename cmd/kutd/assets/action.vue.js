@@ -19,13 +19,15 @@ var Action = Vue.component("Action", {
             />
           </div>
         </div>
-        <button
-          type="submit"
-          v-on:click="clickExecute()"
-          class="btn btn-primary"
-        >
-          Execute
-        </button>
+        <div class="d-flex flex-row-reverse">
+          <button
+            type="submit"
+            v-on:click="clickExecute()"
+            class="btn btn-primary"
+          >
+            Execute
+          </button>
+        </div>
       </form>
     </div>
   `,

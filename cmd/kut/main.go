@@ -15,30 +15,30 @@ func main() {
 
 	app := &cli.App{
 		Name:    "kut",
-		Usage:   "run a kut executer.",
+		Usage:   "Run commands easily.",
 		Version: version.Version,
 		Commands: append(
 			[]*cli.Command{
 				{
 					Name:    "start",
-					Usage:   "starts executor for a menu",
+					Usage:   "Starts executor for a menu",
 					Aliases: []string{"s"},
 					Flags: []cli.Flag{
 						&cli.StringFlag{
 							Name:    "master",
 							Value:   "http://localhost:7171",
-							Usage:   "use a different master than default, use cautiously!",
+							Usage:   "Use a different master than default, use cautiously!",
 							Aliases: []string{"r"},
 						},
 						&cli.StringFlag{
 							Name:    "channel",
 							Value:   "0",
-							Usage:   "select a channel.",
+							Usage:   "Select a channel.",
 							Aliases: []string{"c"},
 						},
 						&cli.StringFlag{
 							Name:     "menu",
-							Usage:    "the menu to use",
+							Usage:    "Menu to use",
 							Aliases:  []string{"m"},
 							Required: true,
 						},
@@ -57,12 +57,12 @@ func main() {
 				},
 				{
 					Name:    "ingest",
-					Usage:   "ingests menu locally from a source",
+					Usage:   "Ingests menu locally from a source",
 					Aliases: []string{"i"},
 					Flags: []cli.Flag{
 						&cli.StringFlag{
 							Name:     "source",
-							Usage:    "source to ingest",
+							Usage:    "URL or file path to source",
 							Aliases:  []string{"s"},
 							Required: true,
 						},

@@ -3,7 +3,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](/LICENSE.md)
 [![CircleCI](https://circleci.com/gh/bettercallshao/kut.svg?style=shield)](https://circleci.com/gh/bettercallshao/kut)
 
-Run commands more easily.
+Run commands easily.
 
 * [What is it](#what-is-it)
 * [Installation](#installation)

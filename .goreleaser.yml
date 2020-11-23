@@ -33,13 +33,13 @@ brews:
       name: homebrew-tap
     folder: Formula
     homepage: "https://github.com/bettercallshao/kut"
-    description: "Run commands more easily"
+    description: "Run commands easily"
 scoop:
   bucket:
     owner: bettercallshao
     name: scoop-bucket
   homepage: "https://github.com/bettercallshao/kut"
-  description: "Run commands more easily"
+  description: "Run commands easily"
   license: MIT
 archives:
   - format: zip

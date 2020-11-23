@@ -59,6 +59,7 @@ func main() {
 	if port == "" {
 		port = "7171"
 	}
-	log.Println("listening on http://localhost:" + port)
-	router.Run(":" + port)
+	host := "127.0.0.1"
+	log.Println("listening on http://" + host + ":" + port)
+	router.Run(host + ":" + port)
 }

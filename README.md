@@ -8,8 +8,9 @@ Run commands easily.
 * [What is it](#what-is-it)
 * [Installation](#installation)
 * [Quick start](#quick-start)
+* [Web interface](#web-interface)
 * [Develop](#develop)
-* [TODO](#todo)
+* [Further info](#further-info)
 
 ## What is it
 
@@ -43,17 +44,17 @@ kut i -s https://raw.githubusercontent.com/bettercallshao/kut-menus/master/devel
 See a list of commands by running `kut h`.
 ```
 NAME:
-   kut - run a kut executer.
+   kut - Run commands easily.
 
 USAGE:
    kut [global options] command [command options] [arguments...]
 
 VERSION:
-   v0.4.11-20201115140037
+   v0.5.2-20201123005537
 
 COMMANDS:
-   start, s           starts executor for a menu
-   ingest, i          ingests menu locally from a source
+   start, s           Starts executor for a menu
+   ingest, i          Ingests menu locally from a source
    developer-demo, d  Developer commands for demo
    python-demo, p     Python commands for demo
    help, h            Shows a list of commands or help for one command
@@ -188,10 +189,54 @@ actions:
 
 Add to this file or create more YAMLs in `$HOME/.kut/menus/` to add more commands.
 
+## Web interface
+
+Kut can also be run in conjunction with kutd to give a web based user interface to the menus. Kutd is installed as part of the kut package and runs without arguments.
+```
+[kutd] 2020/11/24 01:42:01 version: v0.5.2-20201123005537
+[kutd] 2020/11/24 01:42:01 starting kutd ...
+[kutd] 2020/11/24 01:42:01 listening on http://127.0.0.1:7171
+```
+
+It is recommended to install kutd as a start up service for convenience with the official helper menus.
+
+For Windows (see help for more commands).
+```
+kut i -s https://raw.githubusercontent.com/bettercallshao/kut-menus/master/windows-kutd.yaml
+kut windows-kutd startup-add
+```
+
+For Mac (see help for more commands).
+```
+kut i -s https://raw.githubusercontent.com/bettercallshao/kut-menus/master/mac-kutd.yaml
+kut mac-kutd startup-add
+```
+
+Once kutd is running, visit [http://127.0.0.1:7171](http://127.0.0.1:7171) in browser to find three sections.
+* Channels - each channel is a placeholder for a kut executor to connect to. If visited without active connection, it shows a blank message.
+* Menus - each available menu can be viewed as a JSON.
+* Ingestion - ingesting menus same as kut.
+
+As an example, we will run the `csv-to-markdown` command in the web interface. First open a terminal (with python3 available) and connect a kut executor to kutd (on channel 0 by default) declaring the `python-demo` menu.
+```
+kut s -m python-demo
+```
+
+Logs are printed and the command should block and occupy the terminal. Now visit channel 0 on the page, click on `csv-to-markdown`, copy the following into the `data` param, press execute, then toggle markdown to render it.
+```
+Name,Icon,Website
+Facebook,[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](),https://facebook.com/
+Twitter,[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](),https://twitter.com/home
+```
+
+![Drag Racing](https://i.imgur.com/hQcheIU.gif)
+
 ## Develop
 
 To build, install golang and run `make`. The CI is powered by [GoReleaser](https://goreleaser.com/) and CircleCI.
 
-## TODO
+## Further info
 
-This project builds `kut` and `kutd`. `kutd` is a web frontend allowing access to the same commands from the browser. Documentation is to be completed, for the meantime, there is an outdated [blog](https://medium.com/@bettercallshao/kut-free-ui-for-everyone-a262a82c5bab).
+I wrote a blog series on kut https://bettercallshao.com/tags/kut/
+
+Please contact me via https://bettercallshao.com/author/

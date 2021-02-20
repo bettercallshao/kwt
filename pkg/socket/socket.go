@@ -4,8 +4,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/bettercallshao/kut/pkg/exch"
-	"github.com/bettercallshao/kut/pkg/msg"
+	"github.com/bettercallshao/kwt/pkg/exch"
+	"github.com/bettercallshao/kwt/pkg/msg"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )

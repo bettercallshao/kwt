@@ -33,7 +33,7 @@ func check(err error) {
 }
 
 func dl(url string) {
-	fn := strings.Replace(url, "https://", "cmd/kutd/assets/third/", -1)
+	fn := strings.Replace(url, "https://", "cmd/kwtd/assets/third/", -1)
 
 	check(os.MkdirAll(filepath.Dir(fn), os.ModePerm))
 	out, err := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE, 0644)

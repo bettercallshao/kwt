@@ -1,8 +1,8 @@
 package msg
 
 import (
-	"github.com/bettercallshao/kut/pkg/cmd"
-	"github.com/bettercallshao/kut/pkg/menu"
+	"github.com/bettercallshao/kwt/pkg/cmd"
+	"github.com/bettercallshao/kwt/pkg/menu"
 )
 
 // HGOOD is a good code for http calls
@@ -29,7 +29,7 @@ type ChannelInfoMap map[string]ChannelInfo
 // MenuName is an alias for the json field name
 const MenuName = "menuname"
 
-// Version represents kut version
+// Version represents kwt version
 type Version struct {
 	Version string `json:"version"`
 }

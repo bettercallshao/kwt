@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bettercallshao/kut/pkg/alias"
-	"github.com/bettercallshao/kut/pkg/cmd"
-	"github.com/bettercallshao/kut/pkg/menu"
+	"github.com/bettercallshao/kwt/pkg/alias"
+	"github.com/bettercallshao/kwt/pkg/cmd"
+	"github.com/bettercallshao/kwt/pkg/menu"
 	"github.com/urfave/cli/v2"
 )
 

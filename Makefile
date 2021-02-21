@@ -1,4 +1,4 @@
-cmds = kut kutd
+cmds = kwt kwtd
 vfile = pkg/version/version.go
 vdata = `git describe --tags`-`git log -1 --format=%cd --date=format:"%Y%m%d%H%M%S"`
 
@@ -22,18 +22,18 @@ version:
 tidy:
 	go mod tidy && go mod vendor && go fmt ./pkg/* ./cmd/*
 
-kutd: third assets
+kwtd: third assets
 
 assets:
 	go install github.com/jessevdk/go-assets-builder && \
-	cd ./cmd/kutd && \
+	cd ./cmd/kwtd && \
 	go-assets-builder -s=/assets/ -o assets.go assets
 
 third:
 	GOOS= GOARCH= go run cmd/prebuild/main.go
 
 package: $(cmds)
-	zip -q dist/kut-$$GOOS-$$GOARCH-$(vdata).zip kut* kutd* LICENSE README.md
+	zip -q dist/kwt-$$GOOS-$$GOARCH-$(vdata).zip kwt* kwtd* LICENSE README.md
 
 test: version
 	go test ./pkg/*

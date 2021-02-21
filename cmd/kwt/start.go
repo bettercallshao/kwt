@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/bettercallshao/kut/pkg/cmd"
-	"github.com/bettercallshao/kut/pkg/exch"
-	"github.com/bettercallshao/kut/pkg/menu"
-	"github.com/bettercallshao/kut/pkg/msg"
+	"github.com/bettercallshao/kwt/pkg/cmd"
+	"github.com/bettercallshao/kwt/pkg/exch"
+	"github.com/bettercallshao/kwt/pkg/menu"
+	"github.com/bettercallshao/kwt/pkg/msg"
 	"github.com/go-resty/resty/v2"
 	"github.com/gorilla/websocket"
 )

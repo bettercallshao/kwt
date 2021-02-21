@@ -6,15 +6,15 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/bettercallshao/kut/pkg/menu"
-	"github.com/bettercallshao/kut/pkg/version"
+	"github.com/bettercallshao/kwt/pkg/menu"
+	"github.com/bettercallshao/kwt/pkg/version"
 )
 
 func main() {
-	log.SetPrefix("[kut] ")
+	log.SetPrefix("[kwt] ")
 
 	app := &cli.App{
-		Name:    "kut",
+		Name:    "kwt",
 		Usage:   "Run commands easily.",
 		Version: version.Version,
 		Commands: append(

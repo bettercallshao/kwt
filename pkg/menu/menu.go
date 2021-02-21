@@ -41,25 +41,25 @@ type Menu struct {
 	Hash    string   `json:"hash"`
 }
 
-// Home retrieves path of kut home e.g. /home/james/.kut
+// Home retrieves path of kwt home e.g. /home/james/.kwt
 func Home() string {
-	kutHome := os.Getenv("KUT_HOME")
-	if kutHome == "" {
+	kwtHome := os.Getenv("KWT_HOME")
+	if kwtHome == "" {
 		if userHome, err := homedir.Dir(); err != nil {
 			log.Fatal(err)
 		} else {
-			kutHome = filepath.Join(userHome, ".kut")
+			kwtHome = filepath.Join(userHome, ".kwt")
 		}
 	}
 
-	if err := os.MkdirAll(kutHome, os.ModePerm); err != nil {
+	if err := os.MkdirAll(kwtHome, os.ModePerm); err != nil {
 		log.Fatal(err)
 	}
 
-	return kutHome
+	return kwtHome
 }
 
-// Repo retrieves path of local repo e.g. /home/james/.kut/menus
+// Repo retrieves path of local repo e.g. /home/james/.kwt/menus
 func Repo() string {
 	repo := filepath.Join(Home(), "menus")
 

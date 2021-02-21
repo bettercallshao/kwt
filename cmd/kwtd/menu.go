@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/bettercallshao/kut/pkg/menu"
-	"github.com/bettercallshao/kut/pkg/msg"
+	"github.com/bettercallshao/kwt/pkg/menu"
+	"github.com/bettercallshao/kwt/pkg/msg"
 	"github.com/gin-gonic/gin"
 )
 

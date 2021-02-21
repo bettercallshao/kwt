@@ -6,16 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/bettercallshao/kut/pkg/channel"
-	"github.com/bettercallshao/kut/pkg/msg"
-	"github.com/bettercallshao/kut/pkg/socket"
-	"github.com/bettercallshao/kut/pkg/version"
+	"github.com/bettercallshao/kwt/pkg/channel"
+	"github.com/bettercallshao/kwt/pkg/msg"
+	"github.com/bettercallshao/kwt/pkg/socket"
+	"github.com/bettercallshao/kwt/pkg/version"
 )
 
 func main() {
-	log.SetPrefix("[kutd] ")
+	log.SetPrefix("[kwtd] ")
 	log.Printf("version: %s", version.Version)
-	log.Println("starting kutd ...")
+	log.Println("starting kwtd ...")
 
 	gin.SetMode(gin.ReleaseMode)
 	gin.DisableConsoleColor()

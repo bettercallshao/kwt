@@ -32,7 +32,7 @@ func Run(command string, sink chan Payload) {
 	// Write command to a file, don't handle err
 	// Add .bat since windows cares about extention
 	dir, _ := ioutil.TempDir("", "")
-	path := filepath.Join(dir, "kut.bat")
+	path := filepath.Join(dir, "kwt.bat")
 	ioutil.WriteFile(path, []byte(header+command), 0700)
 	defer os.RemoveAll(dir)
 	cmd := exec.Command(shell, flag, path)

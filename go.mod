@@ -1,4 +1,4 @@
-module github.com/bettercallshao/kut
+module github.com/bettercallshao/kwt
 
 go 1.13
 

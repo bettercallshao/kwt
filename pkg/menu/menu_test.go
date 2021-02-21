@@ -24,7 +24,7 @@ func Save(name string, menu *Menu) error {
 
 func TestIngestListLoadHappyPath(t *testing.T) {
 	home, _ := ioutil.TempDir("", "")
-	os.Setenv("KUT_HOME", home)
+	os.Setenv("KWT_HOME", home)
 	defer os.RemoveAll(home)
 
 	name := "test"

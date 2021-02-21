@@ -4,9 +4,9 @@ before:
   hooks:
     - make
 builds:
-  - id: kut
-    main: ./cmd/kut
-    binary: kut
+  - id: kwt
+    main: ./cmd/kwt
+    binary: kwt
     goos:
       - linux
       - windows
@@ -15,9 +15,9 @@ builds:
       - amd64
       - arm
       - arm64
-  - id: kutd
-    main: ./cmd/kutd
-    binary: kutd
+  - id: kwtd
+    main: ./cmd/kwtd
+    binary: kwtd
     goos:
       - linux
       - windows
@@ -27,18 +27,18 @@ builds:
       - arm
       - arm64
 brews:
-  - name: kut
+  - name: kwt
     tap:
       owner: bettercallshao
       name: homebrew-tap
     folder: Formula
-    homepage: "https://github.com/bettercallshao/kut"
+    homepage: "https://github.com/bettercallshao/kwt"
     description: "Run commands easily"
 scoop:
   bucket:
     owner: bettercallshao
     name: scoop-bucket
-  homepage: "https://github.com/bettercallshao/kut"
+  homepage: "https://github.com/bettercallshao/kwt"
   description: "Run commands easily"
   license: MIT
 archives:

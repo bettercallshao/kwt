@@ -25,7 +25,7 @@ tidy:
 kwtd: third assets
 
 assets:
-	go install github.com/jessevdk/go-assets-builder && \
+	go install -mod=mod github.com/jessevdk/go-assets-builder && \
 	cd ./cmd/kwtd && \
 	go-assets-builder -s=/assets/ -o assets.go assets
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -14,9 +15,10 @@ func main() {
 	log.SetPrefix("[kwt] ")
 
 	app := &cli.App{
-		Name:    "kwt",
-		Usage:   "Run commands easily.",
-		Version: version.Version,
+		Name:                 "kwt",
+		Usage:                "Run commands easily.",
+		Version:              version.Version,
+		EnableBashCompletion: true,
 		Commands: append(
 			[]*cli.Command{
 				{
@@ -74,6 +76,69 @@ func main() {
 							return cli.Exit("error: failed to ingest", -1)
 						}
 
+						return nil
+					},
+				},
+				{
+					// https://github.com/urfave/cli/blob/master/docs/v2/manual.md#default-auto-completion
+					Name:  "complete",
+					Usage: "Generate shell completion script",
+					Flags: []cli.Flag{
+						&cli.StringFlag{
+							Name:    "command",
+							Value:   "kwt",
+							Usage:   "The command to attach completion to",
+							Aliases: []string{"c"},
+						},
+						&cli.StringFlag{
+							Name:    "shell",
+							Value:   "bash",
+							Usage:   "The shell type",
+							Aliases: []string{"s"},
+						},
+					},
+					Action: func(c *cli.Context) error {
+						script := `# bash completion script for kwt
+_kwt_bash_autocomplete() {
+	if [[ "${COMP_WORDS[0]}" != "source" ]]; then
+	local cur opts base
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	if [[ "$cur" == "-"* ]]; then
+		opts=$( ${COMP_WORDS[@]:0:$COMP_CWORD} ${cur} --generate-bash-completion )
+	else
+		opts=$( ${COMP_WORDS[@]:0:$COMP_CWORD} --generate-bash-completion )
+	fi
+	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+	return 0
+	fi
+}
+complete -o bashdefault -o default -o nospace -F _kwt_bash_autocomplete ` + c.String("command")
+						if c.String("shell") == "zsh" {
+							script = `# zsh completion script for kwt
+_CLI_ZSH_AUTOCOMPLETE_HACK=1
+_kwt_zsh_autocomplete() {
+
+	local -a opts
+	local cur
+	cur=${words[-1]}
+	if [[ "$cur" == "-"* ]]; then
+	opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} ${cur} --generate-bash-completion)}")
+	else
+	opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} --generate-bash-completion)}")
+	fi
+
+	if [[ "${opts[1]}" != "" ]]; then
+	_describe 'values' opts
+	else
+	_files
+	fi
+
+	return
+}
+compdef _kwt_zsh_autocomplete ` + c.String("command")
+						}
+						fmt.Println(script)
 						return nil
 					},
 				},

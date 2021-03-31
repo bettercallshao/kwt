@@ -14,6 +14,24 @@ import (
 func main() {
 	log.SetPrefix("[kwt] ")
 
+	cli.AppHelpTemplate = `NAME:
+   {{.Name}} - {{.Usage}}
+
+USAGE:
+   {{.HelpName}} [global options] command subcommand [options]{{if .Commands}}
+
+VERSION:
+   {{.Version}}
+
+COMMANDS:
+{{range .Commands}}   {{join .Names ", "}}{{ "\t"}}{{.Usage}}
+{{if .Subcommands}}{{range .Subcommands}}{{"\t"}}{{join .Names ", "}}{{"\t"}}{{.Usage}}
+{{end}}{{end}}{{end}}{{end}}
+GLOBAL OPTIONS:
+   {{range .VisibleFlags}}{{.}}
+   {{end}}
+`
+
 	app := &cli.App{
 		Name:                 "kwt",
 		Usage:                "Run commands easily.",

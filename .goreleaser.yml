@@ -34,6 +34,9 @@ brews:
     folder: Formula
     homepage: "https://github.com/bettercallshao/kwt"
     description: "Run commands easily"
+    install: |
+      bin.install "kwt"
+      bin.install "kwtd"
 scoop:
   bucket:
     owner: bettercallshao

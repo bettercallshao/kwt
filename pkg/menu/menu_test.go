@@ -49,7 +49,7 @@ func TestIngestListLoadHappyPath(t *testing.T) {
 	if other.Actions == nil {
 		t.Fail()
 	}
-	if other.Hash != "4f63" {
+	if other.Hash != "8091" {
 		t.Fail()
 	}
 }

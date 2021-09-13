@@ -4,17 +4,20 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 
 	"github.com/ghodss/yaml"
 	"github.com/mitchellh/go-homedir"
+	"github.com/yargevad/filepathx"
 )
 
 // Param struct: a parameter for a action
@@ -39,6 +42,7 @@ type Menu struct {
 	Help    string   `json:"help"`
 	Actions []Action `json:"actions" binding:"required"`
 	Hash    string   `json:"hash"`
+	Path    string   `json:"path"`
 }
 
 // Home retrieves path of kwt home e.g. /home/james/.kwt
@@ -59,40 +63,9 @@ func Home() string {
 	return kwtHome
 }
 
-// Repo retrieves path of local repo e.g. /home/james/.kwt/menus
-func Repo() string {
-	repo := filepath.Join(Home(), "menus")
-
-	if err := os.MkdirAll(repo, os.ModePerm); err != nil {
-		log.Fatal(err)
-	}
-
-	return repo
-}
-
-// Path generates the path to the named menu
-func Path(name string) string {
-	return filepath.Join(Repo(), name+".yaml")
-}
-
-// List generates available menus
-func List() []string {
-	const suffix = ".yaml"
-	var files []os.FileInfo
-	var err error
-	var ls []string
-
-	if files, err = ioutil.ReadDir(Repo()); err != nil {
-		log.Fatal(err)
-	}
-
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), suffix) {
-			ls = append(ls, strings.TrimSuffix(f.Name(), suffix))
-		}
-	}
-
-	return ls
+// Pwd path used to find menus i.e. .kwt
+func Pwd() string {
+	return ".kwt"
 }
 
 // Ingest a file into system store
@@ -102,6 +75,7 @@ func Ingest(source string) error {
 	var parsed *url.URL
 	var resp *http.Response
 	var menu Menu
+	var path string
 
 	parsed, err = url.Parse(source)
 	if strings.HasPrefix(parsed.Scheme, "http") {
@@ -122,19 +96,90 @@ func Ingest(source string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(Path(menu.Name), data, 0644)
+	// we can't handle '/' character in file name yet
+	path = filepath.Join(Home(), strings.ReplaceAll(menu.Name, "/", "+")+".yaml")
+
+	return ioutil.WriteFile(path, data, 0644)
 }
 
-// Load a menu given a name
-func Load(name string) (Menu, error) {
-	var data []byte
+// MapRepo loads available menus from repo
+func MapRepo(repo string) map[string]Menu {
+	var pattern = repo + "/**/*.yaml"
+	var paths []string
 	var err error
+	var menuMap map[string]Menu
+	var data []byte
+	var menu Menu
 
-	if data, err = ioutil.ReadFile(Path(name)); err != nil {
-		return Menu{}, err
+	menuMap = make(map[string]Menu)
+
+	if paths, err = filepathx.Glob(pattern); err != nil {
+		log.Fatal(err)
 	}
 
-	return Parse(data)
+	for _, path := range paths {
+		if data, err = ioutil.ReadFile(path); err != nil {
+			// silently ignore bad files
+			continue
+		}
+		if menu, err = Parse(data); err != nil {
+			continue
+		}
+		// ignore duplicate keys for now
+		menu.Path = path
+		menuMap[menu.Name] = menu
+	}
+
+	return menuMap
+}
+
+// Map loads all available menus
+func Map() map[string]Menu {
+	homeMap := MapRepo(Home())
+	pwdMap := MapRepo(Pwd())
+	for name, menu := range pwdMap {
+		homeMap[name] = menu
+	}
+	return homeMap
+}
+
+func (m *Menu) isPwd() bool {
+	return strings.HasPrefix(m.Path, Pwd())
+}
+
+// List generates list of menu names, home first, pwd after
+func List() []string {
+	menuMap := Map()
+	names := make([]string, len(menuMap))
+
+	i := 0
+	for name := range menuMap {
+		names[i] = name
+		i++
+	}
+
+	sort.Slice(names, func(a, b int) bool {
+		aMenu := menuMap[names[a]]
+		bMenu := menuMap[names[b]]
+		if aMenu.isPwd() != bMenu.isPwd() {
+			return bMenu.isPwd()
+		}
+		return aMenu.Name < bMenu.Name
+	})
+	return names
+}
+
+// Load loads the menu identified by name
+func Load(name string) (Menu, error) {
+	var err error
+
+	menuMap := Map()
+	menu, found := menuMap[name]
+	if !found {
+		err = errors.New("")
+	}
+
+	return menu, err
 }
 
 // Parse a menu given a blob

@@ -26,11 +26,10 @@ func commands(avoid []string) []*cli.Command {
 		Aliases: []string{"d"},
 	}
 
+	menuMap := menu.Map()
+	// we need the ordering provided by List()
 	for _, name := range menu.List() {
-		menu, err := menu.Load(name)
-		if err != nil {
-			continue
-		}
+		menu := menuMap[name]
 
 		subCommands := make([]*cli.Command, 0)
 		subStore := alias.New()
@@ -73,7 +72,7 @@ func commands(avoid []string) []*cli.Command {
 			commands,
 			&cli.Command{
 				Name:        menu.Name,
-				Usage:       menu.Help,
+				Usage:       menu.Help + " " + menu.Path,
 				Subcommands: subCommands,
 				Aliases:     alias.Pick(store, menu.Name),
 			},

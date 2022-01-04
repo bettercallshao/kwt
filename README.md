@@ -152,7 +152,7 @@ print('\n'.join(
 "
 ```
 
-First the command template was printed, then the command rendered with input arguments. The command is defined in `$HOME/.kwt/menus/python-demo.yaml`.
+First the command template was printed, then the command rendered with input arguments. The command is defined in `$HOME/.kwt/python-demo.yaml`.
 ```yaml
 name: python-demo
 version: v0.1.0
@@ -187,7 +187,7 @@ actions:
     value: CAD,GBP
 ```
 
-Add to this file or create more YAMLs in `$HOME/.kwt/menus/` to add more commands.
+Add to this file or create more YAMLs in `$HOME/.kwt/` to add more commands. If some commands should only be available locally in a specific cwd, add the YAML in `$CWD/.kwt/`.
 
 ## Web interface
 

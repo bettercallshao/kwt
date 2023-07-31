@@ -10,7 +10,7 @@ clean:
 	rm -f $(cmds) $(addsuffix .exe, $(cmds))
 
 $(cmds): version tidy
-	go build ./cmd/$@
+	go build -mod=mod ./cmd/$@
 
 version:
 	rm -f $(vfile)
@@ -26,6 +26,7 @@ kwtd: third assets
 
 assets:
 	go install -mod=mod github.com/jessevdk/go-assets-builder && \
+	go mod vendor && \
 	cd ./cmd/kwtd && \
 	go-assets-builder -s=/assets/ -o assets.go assets
 

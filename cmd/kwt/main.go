@@ -160,6 +160,46 @@ compdef _kwt_zsh_autocomplete ` + c.String("command")
 						return nil
 					},
 				},
+				{
+					Name:  "shorthands",
+					Usage: "Generate no space short hands as shell alias",
+					Flags: []cli.Flag{
+						&cli.StringFlag{
+							Name:    "prefix",
+							Value:   "kk",
+							Usage:   "The string to prefix short hands",
+							Aliases: []string{"p"},
+						},
+					},
+					Action: func(c *cli.Context) error {
+						prefix := c.String("prefix")
+						for _, command := range c.App.Commands {
+							first := shorten(command)
+							if first == "" {
+								continue
+							}
+							fmt.Printf("alias %s%s='kwt %s'\n", prefix, first, first)
+							for _, subcommand := range command.Subcommands {
+								second := shorten(subcommand)
+								if second == "" {
+									continue
+								}
+								fmt.Printf("alias %s%s%s='kwt %s %s'\n",
+									prefix, first, second, first, second)
+								for _, flag := range subcommand.Flags {
+									if stringFlag, ok := flag.(*cli.StringFlag); ok {
+										if len(stringFlag.Aliases) == 1 {
+											third := stringFlag.Aliases[0]
+											fmt.Printf("alias %s%s%s%s='kwt %s %s -%s'\n",
+												prefix, first, second, third, first, second, third)
+										}
+									}
+								}
+							}
+						}
+						return nil
+					},
+				},
 			},
 			commands([]string{"s", "i"})...,
 		),

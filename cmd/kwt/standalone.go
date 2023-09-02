@@ -85,8 +85,8 @@ func commands(avoid []string) []*cli.Command {
 func act(c *cli.Context) error {
 	dry := c.Bool(DRY)
 
-	// the cli lib concatenates command hierarchy, menu name is the second
-	name := strings.Split(c.App.Name, " ")[1]
+	// only HelpName field under command can we find parent command
+	name := strings.Split(c.Command.HelpName, " ")[1]
 
 	loaded, err := menu.Load(name)
 	if err != nil {

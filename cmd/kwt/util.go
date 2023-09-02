@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/urfave/cli/v2"
 	"net/url"
 	"os"
 	"os/signal"
@@ -56,4 +57,14 @@ func cancelChan() chan os.Signal {
 func jsonParagraph(target interface{}) string {
 	raw, _ := json.MarshalIndent(target, "", "  ")
 	return string(raw)
+}
+
+func shorten(command *cli.Command) string {
+	if len(command.Name) == 1 {
+		return command.Name
+	} else if len(command.Aliases) == 1 {
+		return command.Aliases[0]
+	} else {
+		return ""
+	}
 }

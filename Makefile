@@ -22,11 +22,10 @@ version:
 tidy:
 	go mod tidy && go mod vendor && go fmt ./pkg/* ./cmd/*
 
-kwtd: third assets
+kwtd: assets
 
-assets:
-	go install -mod=mod github.com/jessevdk/go-assets-builder && \
-	go mod vendor && \
+assets: third
+	go install github.com/jessevdk/go-assets-builder@latest && \
 	cd ./cmd/kwtd && \
 	go-assets-builder -s=/assets/ -o assets.go assets
 

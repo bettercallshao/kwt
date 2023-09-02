@@ -15,6 +15,8 @@ builds:
       - amd64
       - arm
       - arm64
+    flags:
+      - -mod=mod
   - id: kwtd
     main: ./cmd/kwtd
     binary: kwtd
@@ -26,9 +28,11 @@ builds:
       - amd64
       - arm
       - arm64
+    flags:
+      - -mod=mod
 brews:
   - name: kwt
-    tap:
+    repository:
       owner: bettercallshao
       name: homebrew-tap
     folder: Formula
@@ -37,13 +41,13 @@ brews:
     install: |
       bin.install "kwt"
       bin.install "kwtd"
-scoop:
-  bucket:
-    owner: bettercallshao
-    name: scoop-bucket
-  homepage: "https://github.com/bettercallshao/kwt"
-  description: "Run commands easily"
-  license: MIT
+scoops:
+  - repository:
+      owner: bettercallshao
+      name: scoop-bucket
+    homepage: "https://github.com/bettercallshao/kwt"
+    description: "Run commands easily"
+    license: MIT
 archives:
   - format: zip
 checksum:

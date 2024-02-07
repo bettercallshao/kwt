@@ -5,7 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -22,22 +22,25 @@ import (
 
 // Param struct: a parameter for a action
 type Param struct {
-	Name  string `json:"name" binding:"required"`
-	Help  string `json:"help"`
-	Value string `json:"value"`
+	Name    string   `json:"name" binding:"required"`
+	Aliases []string `json:"aliases"`
+	Help    string   `json:"help"`
+	Value   string   `json:"value"`
 }
 
 // Action struct: a thing a user can do
 type Action struct {
-	Name     string  `json:"name" binding:"required"`
-	Help     string  `json:"help"`
-	Template string  `json:"template" binding:"required"`
-	Params   []Param `json:"params"`
+	Name     string   `json:"name" binding:"required"`
+	Aliases  []string `json:"aliases"`
+	Help     string   `json:"help"`
+	Template string   `json:"template" binding:"required"`
+	Params   []Param  `json:"params"`
 }
 
 // Menu struct: a list of actions
 type Menu struct {
 	Name    string   `json:"name" binding:"required"`
+	Aliases []string `json:"aliases"`
 	Version string   `json:"version"`
 	Help    string   `json:"help"`
 	Actions []Action `json:"actions" binding:"required"`
@@ -83,11 +86,11 @@ func Ingest(source string) error {
 			return err
 		}
 		defer resp.Body.Close()
-		if data, err = ioutil.ReadAll(resp.Body); err != nil {
+		if data, err = io.ReadAll(resp.Body); err != nil {
 			return err
 		}
 	} else {
-		if data, err = ioutil.ReadFile(source); err != nil {
+		if data, err = os.ReadFile(source); err != nil {
 			return err
 		}
 	}
@@ -99,7 +102,7 @@ func Ingest(source string) error {
 	// we can't handle '/' character in file name yet
 	path = filepath.Join(Home(), strings.ReplaceAll(menu.Name, "/", "+")+".yaml")
 
-	return ioutil.WriteFile(path, data, 0644)
+	return os.WriteFile(path, data, 0644)
 }
 
 // MapRepo loads available menus from repo
@@ -118,7 +121,7 @@ func MapRepo(repo string) map[string]Menu {
 	}
 
 	for _, path := range paths {
-		if data, err = ioutil.ReadFile(path); err != nil {
+		if data, err = os.ReadFile(path); err != nil {
 			// silently ignore bad files
 			continue
 		}

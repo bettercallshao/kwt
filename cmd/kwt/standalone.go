@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bettercallshao/kwt/pkg/alias"
 	"github.com/bettercallshao/kwt/pkg/cmd"
 	"github.com/bettercallshao/kwt/pkg/menu"
 	"github.com/urfave/cli/v2"
@@ -12,18 +11,12 @@ import (
 
 const DRY = "dry"
 
-func commands(avoid []string) []*cli.Command {
-	// Two aliases are reserved: help -> h, version -> v
-	hv := []string{"h", "v"}
+func commands() []*cli.Command {
 	commands := make([]*cli.Command, 0)
-	store := alias.New()
-	alias.Avoid(store, hv)
-	alias.Avoid(store, avoid)
 
 	dryFlag := &cli.BoolFlag{
-		Name:    DRY,
-		Usage:   "render command but don't run",
-		Aliases: []string{"d"},
+		Name:  DRY,
+		Usage: "render command but don't run",
 	}
 
 	menuMap := menu.Map()
@@ -32,15 +25,10 @@ func commands(avoid []string) []*cli.Command {
 		menu := menuMap[name]
 
 		subCommands := make([]*cli.Command, 0)
-		subStore := alias.New()
-		alias.Avoid(subStore, hv)
 
 		for _, action := range menu.Actions {
 
 			flags := make([]cli.Flag, 0)
-			flagStore := alias.New()
-			alias.Avoid(flagStore, hv)
-			alias.Avoid(flagStore, dryFlag.Aliases)
 
 			for _, param := range action.Params {
 
@@ -50,7 +38,7 @@ func commands(avoid []string) []*cli.Command {
 						Name:    param.Name,
 						Value:   param.Value,
 						Usage:   param.Help,
-						Aliases: alias.Pick(flagStore, param.Name),
+						Aliases: param.Aliases,
 					},
 				)
 			}
@@ -63,7 +51,7 @@ func commands(avoid []string) []*cli.Command {
 					Usage:   action.Help,
 					Flags:   flags,
 					Action:  act,
-					Aliases: alias.Pick(subStore, action.Name),
+					Aliases: action.Aliases,
 				},
 			)
 		}
@@ -74,7 +62,7 @@ func commands(avoid []string) []*cli.Command {
 				Name:        menu.Name,
 				Usage:       menu.Help + " " + menu.Path,
 				Subcommands: subCommands,
-				Aliases:     alias.Pick(store, menu.Name),
+				Aliases:     menu.Aliases,
 			},
 		)
 	}

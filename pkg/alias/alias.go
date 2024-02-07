@@ -13,7 +13,9 @@ type Store struct {
 
 // New creates a new alias store
 func New() Store {
-	return Store{set.New()}
+	store := Store{set.New()}
+	Avoid(store, []string{"h"})
+	return store
 }
 
 // Avoid given alias

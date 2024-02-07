@@ -1,7 +1,6 @@
 package menu
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -19,11 +18,11 @@ func Save(name string, menu *Menu) error {
 		return err
 	}
 
-	return ioutil.WriteFile(name, data, 0644)
+	return os.WriteFile(name, data, 0644)
 }
 
 func TestIngestListLoadHappyPath(t *testing.T) {
-	home, _ := ioutil.TempDir("", "")
+	home, _ := os.MkdirTemp("", "")
 	os.Setenv("KWT_HOME", home)
 	defer os.RemoveAll(home)
 
@@ -49,7 +48,7 @@ func TestIngestListLoadHappyPath(t *testing.T) {
 	if other.Actions == nil {
 		t.Fail()
 	}
-	if other.Hash != "8091" {
+	if other.Hash != "7d9f" {
 		t.Fail()
 	}
 }
@@ -59,7 +58,7 @@ func TestRender(t *testing.T) {
 		Name:     "jim",
 		Template: "kubectl {{if .namespace}}-n {{.namespace}} {{end}}get all",
 		Params: []Param{
-			Param{
+			{
 				Name: "namespace",
 			},
 		},

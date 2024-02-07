@@ -7,6 +7,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/bettercallshao/kwt/pkg/alias"
 	"github.com/bettercallshao/kwt/pkg/menu"
 	"github.com/bettercallshao/kwt/pkg/version"
 )
@@ -40,9 +41,8 @@ GLOBAL OPTIONS:
 		Commands: append(
 			[]*cli.Command{
 				{
-					Name:    "start",
-					Usage:   "Starts executor for a menu",
-					Aliases: []string{"s"},
+					Name:  "start",
+					Usage: "Starts executor for a menu",
 					Flags: []cli.Flag{
 						&cli.StringFlag{
 							Name:    "master",
@@ -76,9 +76,8 @@ GLOBAL OPTIONS:
 					},
 				},
 				{
-					Name:    "ingest",
-					Usage:   "Ingests menu locally from a source",
-					Aliases: []string{"i"},
+					Name:  "ingest",
+					Usage: "Ingests menu locally from a source",
 					Flags: []cli.Flag{
 						&cli.StringFlag{
 							Name:     "source",
@@ -201,8 +200,46 @@ compdef _kwt_zsh_autocomplete ` + c.String("command")
 					},
 				},
 			},
-			commands([]string{"s", "i"})...,
+			commands()...,
 		),
+	}
+
+	store := alias.New()
+	for _, command := range app.Commands {
+		alias.Avoid(store, command.Aliases)
+	}
+	for _, command := range app.Commands {
+		if len(command.Aliases) == 0 {
+			command.Aliases = alias.Pick(store, command.Name)
+		}
+		subStore := alias.New()
+		for _, subcommand := range command.Subcommands {
+			alias.Avoid(subStore, subcommand.Aliases)
+		}
+		for _, subcommand := range command.Subcommands {
+			if len(subcommand.Aliases) == 0 {
+				subcommand.Aliases = alias.Pick(subStore, subcommand.Name)
+			}
+			flagStore := alias.New()
+			for _, flag := range subcommand.Flags {
+				if boolFlag, ok := flag.(*cli.BoolFlag); ok {
+					alias.Avoid(flagStore, boolFlag.Aliases)
+				} else if stringFlag, ok := flag.(*cli.StringFlag); ok {
+					alias.Avoid(flagStore, stringFlag.Aliases)
+				}
+			}
+			for _, flag := range subcommand.Flags {
+				if boolFlag, ok := flag.(*cli.BoolFlag); ok {
+					if len(boolFlag.Aliases) == 0 {
+						boolFlag.Aliases = alias.Pick(flagStore, boolFlag.Name)
+					}
+				} else if stringFlag, ok := flag.(*cli.StringFlag); ok {
+					if len(stringFlag.Aliases) == 0 {
+						stringFlag.Aliases = alias.Pick(flagStore, stringFlag.Name)
+					}
+				}
+			}
+		}
 	}
 
 	app.Run(os.Args)

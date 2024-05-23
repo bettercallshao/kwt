@@ -117,43 +117,46 @@ GLOBAL OPTIONS:
 					Action: func(c *cli.Context) error {
 						script := `# bash completion script for kwt
 _kwt_bash_autocomplete() {
-	if [[ "${COMP_WORDS[0]}" != "source" ]]; then
-	local cur opts base
-	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	if [[ "$cur" == "-"* ]]; then
-		opts=$( ${COMP_WORDS[@]:0:$COMP_CWORD} ${cur} --generate-bash-completion )
-	else
-		opts=$( ${COMP_WORDS[@]:0:$COMP_CWORD} --generate-bash-completion )
-	fi
-	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-	return 0
-	fi
+    local cur opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    local cmdline
+    cmdline=$(printf "%q " "${COMP_WORDS[@]:0:$COMP_CWORD}")
+
+    if [[ "$cur" == "-"* ]]; then
+        opts=$(eval "${cmdline} ${cur} --generate-bash-completion")
+    else
+        opts=$(eval "${cmdline} --generate-bash-completion")
+    fi
+
+    # Replace cut the line short to the word before ':'
+    opts=$(echo "${opts}" | sed 's/^\([^:]*\):.*/\1/')
+
+    COMPREPLY=( $(compgen -W "${opts}" -S '' -- "${cur}") )
+    return 0
 }
+
 complete -o bashdefault -o default -o nospace -F _kwt_bash_autocomplete ` + c.String("command")
 						if c.String("shell") == "zsh" {
 							script = `# zsh completion script for kwt
-_CLI_ZSH_AUTOCOMPLETE_HACK=1
 _kwt_zsh_autocomplete() {
+    local -a opts
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
 
-	local -a opts
-	local cur
-	cur=${words[-1]}
-	if [[ "$cur" == "-"* ]]; then
-	opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} ${cur} --generate-bash-completion)}")
-	else
-	opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} --generate-bash-completion)}")
-	fi
+    cur="${words[CURRENT]}"
+    if [[ "$cur" == "-"* ]]; then
+        opts=("${(@f)$( ${words[1,CURRENT-1]} ${cur} --generate-bash-completion )}")
+    else
+        opts=("${(@f)$( ${words[1,CURRENT-1]} --generate-bash-completion )}")
+    fi
 
-	if [[ "${opts[1]}" != "" ]]; then
-	_describe 'values' opts
-	else
-	_files
-	fi
-
-	return
+    _describe 'kwt options' opts
+    return
 }
-compdef _kwt_zsh_autocomplete ` + c.String("command")
+
+compdef _kwt_zsh_autocomplete kwt`
 						}
 						fmt.Println(script)
 						return nil

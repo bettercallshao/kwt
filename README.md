@@ -237,6 +237,4 @@ To build, install golang and run `make`. The CI is powered by [GoReleaser](https
 
 ## Further info
 
-I wrote a blog series on kwt https://bettercallshao.com/tags/kwt/
-
-Please contact me via https://bettercallshao.com/author/
+I wrote a blog series on kwt https://bettercallshao.com/tag/kwt/
